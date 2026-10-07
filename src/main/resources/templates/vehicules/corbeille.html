@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+
+<div th:replace="~{layout :: sidebar}"></div>
+
+<div class="main-content">
+    <div th:replace="~{layout :: topbar}"></div>
+
+    <div class="page-content">
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="page-header">
+            <h1>
+                <i class="bi bi-trash3"></i> Corbeille — Véhicules
+                <span class="badge bg-danger" th:text="${vehicules.size()}">0</span>
+            </h1>
+            <a th:href="@{/vehicules}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour aux véhicules
+            </a>
+        </div>
+
+        <div class="table-container">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Immatriculation</th>
+                    <th>Marque / Modèle</th>
+                    <th>État</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${vehicules.isEmpty()}">
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="bi bi-emoji-smile fs-1 d-block mb-2"></i>
+                        La corbeille est vide. Rien à restaurer.
+                    </td>
+                </tr>
+                <tr th:each="v, iter : ${vehicules}">
+                    <td th:text="${iter.count}">1</td>
+                    <td><code th:text="${v.immatriculation}">ABC</code></td>
+                    <td>
+                        <span th:text="${v.marque}">Marque</span>
+                        <small class="text-muted d-block" th:text="${v.modele}">Modèle</small>
+                    </td>
+                    <td>
+                        <span class="badge badge-disponible" th:text="${v.statutEntretiens}">DISPONIBLE</span>
+                    </td>
+                    <td class="text-end">
+                        <form th:action="@{/vehicules/restaurer/{id}(id=${v.id})}"
+                              method="post" class="d-inline">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-sm btn-success btn-icon" title="Restaurer">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </button>
+                        </form>
+                        <form th:action="@{/vehicules/purger/{id}(id=${v.id})}"
+                              method="post" class="d-inline"
+                              onsubmit="return confirm('ATTENTION : Supprimer DÉFINITIVEMENT ce véhicule ?');">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-sm btn-danger btn-icon" title="Supprimer définitivement">
+                                <i class="bi bi-x-octagon"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{layout :: scripts-fin}"></th:block>
+</body>
+</html>

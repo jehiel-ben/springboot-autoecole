@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+
+<div th:replace="~{layout :: sidebar}"></div>
+
+<div class="main-content">
+    <div th:replace="~{layout :: topbar}"></div>
+
+    <div class="page-content">
+
+        <div class="page-header">
+            <h1>
+                <i class="bi bi-truck"></i>
+                <span th:text="${vehicule.immatriculation}">AB-123-CD</span>
+            </h1>
+            <div>
+                <a th:href="@{/vehicules/modifier/{id}(id=${vehicule.id})}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Modifier
+                </a>
+                <a th:href="@{/vehicules}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+
+        <div class="table-container p-4">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 text-muted">Immatriculation</dt>
+                <dd class="col-sm-9"><code th:text="${vehicule.immatriculation}">ABC</code></dd>
+
+                <dt class="col-sm-3 text-muted">Marque</dt>
+                <dd class="col-sm-9" th:text="${vehicule.marque}">Marque</dd>
+
+                <dt class="col-sm-3 text-muted">Modèle</dt>
+                <dd class="col-sm-9" th:text="${vehicule.modele} ?: '—'">Modèle</dd>
+
+                <dt class="col-sm-3 text-muted">Type de boîte</dt>
+                <dd class="col-sm-9" th:text="${vehicule.typeBoite} ?: '—'">Boîte</dd>
+
+                <dt class="col-sm-3 text-muted">État</dt>
+                <dd class="col-sm-9">
+                    <span class="badge"
+                          th:classappend="
+                            ${vehicule.statutEntretiens == 'DISPONIBLE'} ? 'badge-disponible' :
+                            (${vehicule.statutEntretiens == 'EN_MAINTENANCE'} ? 'badge-maintenance' : 'badge-hors-service')"
+                          th:text="${vehicule.statutEntretiens}">DISPONIBLE</span>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{layout :: scripts}"></th:block>
+</body>
+</html>

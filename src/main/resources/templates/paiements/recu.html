@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reçu de paiement</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f7fa;
+            padding: 30px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .recu-container {
+            background: white;
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 45px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+        .recu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #1e3a8a;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .recu-logo {
+            font-size: 1.8rem;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+        .recu-logo i {
+            font-size: 2.2rem;
+            margin-right: 10px;
+        }
+        .recu-info {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .recu-titre {
+            font-size: 1.5rem;
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .recu-table {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .recu-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .recu-table td:first-child {
+            color: #6c757d;
+            width: 40%;
+        }
+        .recu-table td:last-child {
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+        .recu-total {
+            background: #1e3a8a;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .recu-total .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        .recu-total .montant {
+            font-size: 2.2rem;
+            font-weight: bold;
+        }
+        .recu-signature {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+        .recu-signature div {
+            width: 45%;
+            border-top: 1px solid #6c757d;
+            padding-top: 10px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        .recu-footer {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .recu-container { box-shadow: none; padding: 30px; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="recu-container">
+
+    <div class="recu-header">
+        <div class="recu-logo">
+            <i class="bi bi-car-front-fill"></i>Auto-École Management
+        </div>
+        <div class="recu-info">
+            <b>Reçu N°</b><span th:text="${'REC-' + paiement.id}">REC-1</span><br>
+            <span th:text="'Émis le ' + ${#temporals.format(paiement.datePaiement, 'dd/MM/yyyy')}">Date</span>
+        </div>
+    </div>
+
+    <div class="recu-titre">
+        <i class="bi bi-receipt-cutoff"></i> Reçu de paiement
+    </div>
+
+    <table class="recu-table">
+        <tr>
+            <td>Élève</td>
+            <td th:text="${paiement.eleveNomComplet}">Nom élève</td>
+        </tr>
+        <tr>
+            <td>Date du paiement</td>
+            <td th:text="${#temporals.format(paiement.datePaiement, 'dd/MM/yyyy')}">Date</td>
+        </tr>
+        <tr>
+            <td>Mode de paiement</td>
+            <td th:text="${paiement.modePaiement}">CARTE</td>
+        </tr>
+        <tr>
+            <td>Type de formule</td>
+            <td th:text="${paiement.typeFormule}">FORMULE_COMPLETE</td>
+        </tr>
+    </table>
+
+    <div class="recu-total">
+        <div class="label">MONTANT TOTAL PAYÉ</div>
+        <div class="montant" th:text="${paiement.montant} + ' FBU'">0 FBU</div>
+    </div>
+
+    <div class="recu-signature">
+        <div>Signature de l'élève</div>
+        <div>Cachet de l'auto-école</div>
+    </div>
+
+    <div class="recu-footer">
+        Ce reçu est généré électroniquement et fait foi de paiement.<br>
+        Auto-École Management — Système de gestion — <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span>
+    </div>
+
+    <div class="actions no-print">
+        <button onclick="window.print()" class="btn btn-primary btn-lg">
+            <i class="bi bi-printer-fill"></i> Imprimer le reçu
+        </button>
+        <a th:href="@{/paiements}" class="btn btn-secondary btn-lg ms-2">
+            <i class="bi bi-arrow-left"></i> Retour aux paiements
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

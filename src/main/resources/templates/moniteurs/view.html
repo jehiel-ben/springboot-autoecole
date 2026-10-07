@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+
+<div th:replace="~{layout :: sidebar}"></div>
+
+<div class="main-content">
+    <div th:replace="~{layout :: topbar}"></div>
+
+    <div class="page-content">
+
+        <div class="page-header">
+            <h1>
+                <i class="bi bi-person-vcard-fill"></i>
+                <span th:text="${moniteur.prenom} + ' ' + ${moniteur.nom}">Nom</span>
+            </h1>
+            <div>
+                <a th:href="@{/moniteurs/modifier/{id}(id=${moniteur.id})}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Modifier
+                </a>
+                <a th:href="@{/moniteurs}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+
+        <div class="table-container p-4">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 text-muted">Nom</dt>
+                <dd class="col-sm-9" th:text="${moniteur.nom}">Nom</dd>
+
+                <dt class="col-sm-3 text-muted">Prénom</dt>
+                <dd class="col-sm-9" th:text="${moniteur.prenom}">Prénom</dd>
+
+                <dt class="col-sm-3 text-muted">Numéro permis</dt>
+                <dd class="col-sm-9"><code th:text="${moniteur.numPermis}">ABC</code></dd>
+
+                <dt class="col-sm-3 text-muted">Téléphone</dt>
+                <dd class="col-sm-9" th:text="${moniteur.telephone} ?: '—'">Tel</dd>
+
+                <dt class="col-sm-3 text-muted">Email</dt>
+                <dd class="col-sm-9" th:text="${moniteur.email} ?: '—'">Email</dd>
+
+                <dt class="col-sm-3 text-muted">Disponibilité</dt>
+                <dd class="col-sm-9">
+                    <span th:if="${moniteur.statutDispo}" class="badge badge-disponible">Disponible</span>
+                    <span th:if="${!moniteur.statutDispo}" class="badge badge-inactif">Indisponible</span>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{layout :: scripts}"></th:block>
+</body>
+</html>

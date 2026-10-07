@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+
+<div th:replace="~{layout :: sidebar}"></div>
+
+<div class="main-content">
+    <div th:replace="~{layout :: topbar}"></div>
+
+    <div class="page-content">
+
+        <div th:if="${error}" class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <div class="page-header">
+            <h1>
+                <i class="bi bi-calendar-plus-fill"></i>
+                <span th:text="${isEdit} ? 'Modifier une séance' : 'Nouvelle séance'">Formulaire</span>
+            </h1>
+            <a th:href="@{/seances}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+
+        <div class="table-container p-4">
+            <form th:action="@{/seances/nouveau}"
+                  th:object="${seance}"
+                  method="post">
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Date et heure de début <span class="text-danger">*</span></label>
+                        <input type="datetime-local" th:field="*{dateHeureDebut}" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date et heure de fin <span class="text-danger">*</span></label>
+                        <input type="datetime-local" th:field="*{dateHeureFin}" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Type de cours <span class="text-danger">*</span></label>
+                        <select th:field="*{typeCours}" class="form-select" required id="typeCoursSelect">
+                            <option value="">— Choisir —</option>
+                            <option value="CODE">CODE (théorique)</option>
+                            <option value="CONDUITE">CONDUITE (pratique)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Élève <span class="text-danger">*</span></label>
+                        <select th:field="*{eleveId}" class="form-select" required>
+                            <option value="">— Choisir —</option>
+                            <option th:each="e : ${eleves}"
+                                    th:value="${e.id}"
+                                    th:text="${e.prenom} + ' ' + ${e.nom} + ' (' + ${e.email} + ')'">
+                                Élève
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Moniteur <span class="text-danger">*</span></label>
+                        <select th:field="*{moniteurId}" class="form-select" required>
+                            <option value="">— Choisir —</option>
+                            <option th:each="m : ${moniteurs}"
+                                    th:value="${m.id}"
+                                    th:text="${m.prenom} + ' ' + ${m.nom} + ' (' + ${m.numPermis} + ')'">
+                                Moniteur
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Véhicule
+                            <span id="vehiculeObligatoire" class="text-danger" style="display:none;">*</span>
+                        </label>
+                        <select th:field="*{vehiculeId}" class="form-select" id="vehiculeSelect">
+                            <option value="">— Aucun (cours théorique) —</option>
+                            <option th:each="v : ${vehicules}"
+                                    th:value="${v.id}"
+                                    th:text="${v.immatriculation} + ' - ' + ${v.marque} + ' ' + ${v.modele}">
+                                Véhicule
+                            </option>
+                        </select>
+                        <small class="text-muted">Obligatoire uniquement pour les cours de CONDUITE</small>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/seances}" class="btn btn-secondary">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i>
+                        <span th:text="${isEdit} ? 'Enregistrer' : 'Créer'">Créer</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{layout :: scripts}"></th:block>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeSelect = document.getElementById('typeCoursSelect');
+        const vehiculeSelect = document.getElementById('vehiculeSelect');
+        const vehiculeObligatoire = document.getElementById('vehiculeObligatoire');
+
+        function updateVehiculeRequirement() {
+            if (typeSelect.value === 'CONDUITE') {
+                vehiculeSelect.setAttribute('required', 'required');
+                vehiculeObligatoire.style.display = 'inline';
+            } else {
+                vehiculeSelect.removeAttribute('required');
+                vehiculeObligatoire.style.display = 'none';
+            }
+        }
+
+        typeSelect.addEventListener('change', updateVehiculeRequirement);
+        updateVehiculeRequirement();
+    });
+</script>
+
+</body>
+</html>

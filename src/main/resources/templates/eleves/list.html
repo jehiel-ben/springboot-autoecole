@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+
+<div th:replace="~{layout :: sidebar}"></div>
+
+<div class="main-content">
+    <div th:replace="~{layout :: topbar}"></div>
+
+    <div class="page-content">
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="page-header">
+            <h1>
+                <i class="bi bi-people-fill"></i> Élèves
+                <span class="badge bg-primary" th:text="${eleves.size()}">0</span>
+            </h1>
+            <a th:href="@{/eleves/nouveau}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Nouvel élève
+            </a>
+        </div>
+
+        <div class="table-container">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nom complet</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Date naissance</th>
+                    <th>Statut</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${eleves.isEmpty()}">
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                        Aucun élève enregistré.
+                        <br>
+                        <a th:href="@{/eleves/nouveau}" class="btn btn-primary mt-3">
+                            <i class="bi bi-plus-lg"></i> Ajouter le premier élève
+                        </a>
+                    </td>
+                </tr>
+                <tr th:each="e, iter : ${eleves}">
+                    <td th:text="${iter.count}">1</td>
+                    <td>
+                        <a th:href="@{/eleves/voir/{id}(id=${e.id})}"
+                           class="text-decoration-none fw-bold"
+                           th:text="${e.prenom} + ' ' + ${e.nom}">
+                            Prénom Nom
+                        </a>
+                    </td>
+                    <td th:text="${e.email}">email</td>
+                    <td th:text="${e.telephone} ?: '—'">tel</td>
+                    <td th:text="${e.dateNaissance} != null ? ${#temporals.format(e.dateNaissance, 'dd/MM/yyyy')} : '—'">
+                        date
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${e.statut == 'ACTIF'} ? 'badge-actif' : 'badge-inactif'"
+                              th:text="${e.statut}">ACTIF</span>
+                    </td>
+                    <td class="text-end">
+                        <a th:href="@{/eleves/voir/{id}(id=${e.id})}"
+                           class="btn btn-sm btn-info btn-icon" title="Voir">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a th:href="@{/eleves/modifier/{id}(id=${e.id})}"
+                           class="btn btn-sm btn-warning btn-icon" title="Modifier">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form th:action="@{/eleves/supprimer/{id}(id=${e.id})}"
+                              method="post"
+                              class="d-inline"
+                              onsubmit="return confirm('Supprimer cet élève définitivement ?');">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-sm btn-danger btn-icon" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{layout :: scripts-fin}"></th:block>
+</body>
+</html>

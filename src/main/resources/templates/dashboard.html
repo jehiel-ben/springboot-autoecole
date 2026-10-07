@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout :: head}"></head>
+<body>
+
+<div th:replace="~{layout :: sidebar}"></div>
+
+<div class="main-content">
+    <div th:replace="~{layout :: topbar}"></div>
+
+    <div class="page-content">
+        <div class="page-header">
+            <h1><i class="bi bi-speedometer2"></i> Tableau de bord</h1>
+            <span class="text-muted">Bienvenue,
+                <b th:text="${utilisateurConnecte != null && utilisateurConnecte.nomComplet != null 
+                   ? utilisateurConnecte.nomComplet 
+                   : #authentication.name}">Utilisateur</b>
+            </span>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div>
+                        <p class="stat-value" th:text="${nbEleves}">0</p>
+                        <p class="stat-label">Élèves inscrits</p>
+                    </div>
+                    <i class="bi bi-people-fill stat-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div>
+                        <p class="stat-value" th:text="${nbMoniteurs}">0</p>
+                        <p class="stat-label">Moniteurs</p>
+                    </div>
+                    <i class="bi bi-person-badge-fill stat-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div>
+                        <p class="stat-value" th:text="${nbVehicules}">0</p>
+                        <p class="stat-label">Véhicules</p>
+                    </div>
+                    <i class="bi bi-truck stat-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div>
+                        <p class="stat-value" th:text="${totalPaiements} + ' FBU'">0 €</p>
+                        <p class="stat-label">Total paiements</p>
+                    </div>
+                    <i class="bi bi-cash-coin stat-icon"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-8">
+                <div class="table-container p-4">
+                    <h5 class="mb-3"><i class="bi bi-bar-chart-fill text-primary"></i> Répartition des activités</h5>
+                    <canvas id="chartActivites" height="120"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="table-container p-4">
+                    <h5 class="mb-3"><i class="bi bi-clock-history text-primary"></i> Dernières séances</h5>
+                    <ul class="list-unstyled mb-0" th:if="${!dernieresSeances.isEmpty()}">
+                        <li class="d-flex justify-content-between align-items-center py-2 border-bottom"
+                            th:each="s : ${dernieresSeances}">
+                            <span>
+                                <b th:text="${s.eleveNomComplet}">Eleve</b><br>
+                                <small class="text-muted" th:text="${s.typeCours}">CODE</small>
+                            </span>
+                            <small class="text-muted"
+                                   th:text="${#temporals.format(s.dateHeureDebut, 'dd/MM HH:mm')}">Date</small>
+                        </li>
+                    </ul>
+                    <p th:if="${dernieresSeances.isEmpty()}" class="text-muted text-center mb-0">
+                        Aucune séance
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{layout :: scripts}"></th:block>
+
+<script th:inline="javascript">
+    const ctx = document.getElementById('chartActivites').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Élèves', 'Moniteurs', 'Véhicules', 'Séances', 'Paiements'],
+            datasets: [{
+                label: 'Nombre',
+                data: [
+                    /*[[${nbEleves}]]*/ 0,
+                    /*[[${nbMoniteurs}]]*/ 0,
+                    /*[[${nbVehicules}]]*/ 0,
+                    /*[[${nbSeances}]]*/ 0,
+                    /*[[${nbPaiements}]]*/ 0
+                ],
+                backgroundColor: '#2563eb',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
+
+</body>
+</html>

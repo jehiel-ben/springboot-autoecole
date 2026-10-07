@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+
+<div th:replace="~{layout :: sidebar}"></div>
+
+<div class="main-content">
+    <div th:replace="~{layout :: topbar}"></div>
+
+    <div class="page-content">
+
+        <div th:if="${error}" class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <div class="page-header">
+            <h1>
+                <i class="bi" th:classappend="${isEdit} ? 'bi-pencil-square' : 'bi-person-plus-fill'"></i>
+                <span th:text="${isEdit} ? 'Modifier un moniteur' : 'Nouveau moniteur'">Formulaire</span>
+            </h1>
+            <a th:href="@{/moniteurs}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+
+        <div class="table-container p-4">
+            <form th:action="${isEdit} ? @{/moniteurs/modifier/{id}(id=${moniteurId})} : @{/moniteurs/nouveau}"
+                  th:object="${moniteur}"
+                  method="post">
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nom <span class="text-danger">*</span></label>
+                        <input type="text" th:field="*{nom}" class="form-control" required maxlength="80">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Prénom <span class="text-danger">*</span></label>
+                        <input type="text" th:field="*{prenom}" class="form-control" required maxlength="80">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Numéro de permis <span class="text-danger">*</span></label>
+                        <input type="text" th:field="*{numPermis}" class="form-control" required maxlength="50">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Téléphone</label>
+                        <input type="text" th:field="*{telephone}" class="form-control" maxlength="20">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" th:field="*{email}" class="form-control" maxlength="150">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Disponibilité</label>
+                        <select th:field="*{statutDispo}" class="form-select">
+                            <option th:value="true">Disponible</option>
+                            <option th:value="false">Indisponible</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/moniteurs}" class="btn btn-secondary">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i>
+                        <span th:text="${isEdit} ? 'Enregistrer' : 'Créer'">Enregistrer</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{layout :: scripts}"></th:block>
+</body>
+</html>
